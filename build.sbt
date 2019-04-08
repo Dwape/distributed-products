@@ -11,12 +11,13 @@ lazy val root = (project in file("."))
     libraryDependencies += scalaTest % Test
   )
 
-libraryDependencies += "com.typesafe.slick" %% "slick" % "3.3.0"
-
-libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.24"
-
-// https://mvnrepository.com/artifact/com.h2database/h2
-libraryDependencies += "com.h2database" % "h2" % "1.4.199" % Test
+libraryDependencies ++= Seq(
+  "com.typesafe"                 % "config"                 % "1.3.0"                            
+    withSources() withJavadoc(),
+  "com.typesafe.slick"          %% "slick"                  % "3.3.0",
+  "org.slf4j"                    % "slf4j-nop"              % "1.6.4",
+  "com.h2database"               % "h2"                     % "1.4.199"
+)
 
 
 // See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
