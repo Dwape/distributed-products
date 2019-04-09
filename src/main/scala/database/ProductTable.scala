@@ -6,15 +6,6 @@ trait ProductTable {
   this: Db =>
 
   import config.profile.api._
-  // We want the JdbcProfile for this provider
-  //private val db = Database.forConfig("h2mem1")
-
-  //val ec = ExecutionContext.global
-
-  // These imports are important, the first one brings db into scope, which will let you do the actual db operations.
-  // The second one brings the Slick DSL into scope, which lets you define the table and other queries.
-  //import dbConfig._
-  //import profile.api._
 
   class Products(tag: Tag) extends Table[Product](tag, "product") {
 
@@ -36,4 +27,5 @@ trait ProductTable {
       */
     def * = (id, name, description) <> ((Product.apply _).tupled, Product.unapply)
   }
+
 }
