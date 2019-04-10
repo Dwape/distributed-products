@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package product;
 
-//COMPILAR
 
 service ProductService {
     rpc GetProduct (ProductRequest) returns (ProductReply) {}
