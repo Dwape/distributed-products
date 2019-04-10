@@ -16,6 +16,8 @@ object ProductServer extends App{
   val config = DatabaseConfig.forConfig[H2Profile]("db")
   val repo = new ProductRepository(config)
 
+  repo.create("coca", "fria")
+
   val server = ServerBuilder.forPort(50000)
     .addService(ProductServiceGrpc.bindService(new ProductService(repo), ExecutionContext.global))
     .build()
