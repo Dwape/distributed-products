@@ -7,9 +7,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ProductService (repo: ProductRepository) (implicit ec: ExecutionContext) extends ProductServiceGrpc.ProductService  {
   override def getProduct(request: ProductRequest): Future[ProductReply] = {
+    println("Product requested")
     repo.getById(request.id).map {
       case Some(p) => ProductReply(p.id, p.name, p.description)
-      case None => throw ProductNotFoundException
+      case None => println("product not found"); throw ProductNotFoundException
     }
   }
 

@@ -1,6 +1,6 @@
 package server
 
-import io.grpc.{ManagedChannelBuilder, ServerBuilder}
+import io.grpc.{ManagedChannelBuilder, Server, ServerBuilder}
 import product.product.{NewProductRequest, ProductRequest, ProductServiceGrpc}
 import repositories.ProductRepository
 import service.ProductService
@@ -13,18 +13,39 @@ object ProductServer extends App{
 
   implicit val ec = ExecutionContext.global
 
+  val serviceManager = new ServiceManager
+  serviceManager.startConnection("0.0.0.0", 50000, "product")
+
   val config = DatabaseConfig.forConfig[H2Profile]("db")
   val repo = new ProductRepository(config)
 
-  repo.create("coca", "fria")
-
-  val server = ServerBuilder.forPort(50000)
+  val result = repo.create("coca", "fria")
+  val server: Server = ServerBuilder.forPort(50000)
     .addService(ProductServiceGrpc.bindService(new ProductService(repo), ExecutionContext.global))
     .build()
 
   server.start()
   println("Running...")
+  server.awaitTermination()
+}
 
+object ProductServer2 extends App{
+
+  implicit val ec = ExecutionContext.global
+
+  val stubManager = new ServiceManager
+  stubManager.startConnection("0.0.0.0", 50002, "product")
+
+  val config = DatabaseConfig.forConfig[H2Profile]("db")
+  val repo = new ProductRepository(config)
+
+  val result = repo.create("coca", "fria")
+  val server: Server = ServerBuilder.forPort(50002)
+    .addService(ProductServiceGrpc.bindService(new ProductService(repo), ExecutionContext.global))
+    .build()
+
+  server.start()
+  println("Running...")
   server.awaitTermination()
 }
 
