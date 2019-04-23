@@ -17,6 +17,9 @@ trait ProductTable {
 
     def description = column[String]("description")
 
+    def category = column[String]("category")
+
+
     /**
       * This is the tables default "projection".
       *
@@ -25,7 +28,7 @@ trait ProductTable {
       * In this case, we are simply passing the id, name and page parameters to the Person case classes
       * apply and unapply methods.
       */
-    def * = (id, name, description) <> ((Product.apply _).tupled, Product.unapply)
+    def * = (id, name, description, category) <> ((Product.apply _).tupled, Product.unapply)
   }
 
 }

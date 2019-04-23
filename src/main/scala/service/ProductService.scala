@@ -1,9 +1,10 @@
 package service
 
-import product.product.{NewProductRequest, PingReply, PingRequest, ProductReply, ProductRequest, ProductServiceGrpc}
+import product.product._
 import repositories.ProductRepository
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class ProductService (repo: ProductRepository) (implicit ec: ExecutionContext) extends ProductServiceGrpc.ProductService  {
   override def getProduct(request: ProductRequest): Future[ProductReply] = {
@@ -15,7 +16,14 @@ class ProductService (repo: ProductRepository) (implicit ec: ExecutionContext) e
   }
 
   override def newProduct(request: NewProductRequest): Future[ProductReply] = {
-    repo.create(request.name, request.description).map(p => ProductReply(p.id, p.name, p.description))
+    repo.create(request.name, request.description, request.category).map(p => ProductReply(p.id, p.name, p.description, p.category))
+  }
+
+  override def getProductsByCategory(request: GetProductsByCategoryRequest): Future[GetProductsByCategoryReply] = {
+    repo.getByCategory(request.category).map(Option(_)) map {
+      case Some(p) => GetProductsByCategoryReply(p.map(r => ProductReply(r.id,r.name, r.description, r.category)))
+      case None => println("product not found"); throw ProductNotFoundException
+    }
   }
 
   //implementar isActive (solo recibe el request y devuelve un reply con un string)

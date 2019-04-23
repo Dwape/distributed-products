@@ -19,7 +19,7 @@ object ProductServer extends App{
   val config = DatabaseConfig.forConfig[H2Profile]("db")
   val repo = new ProductRepository(config)
 
-  val result = repo.create("coca", "fria")
+  val result = repo.create("coca", "fria", "Bebida")
   val server: Server = ServerBuilder.forPort(50000)
     .addService(ProductServiceGrpc.bindService(new ProductService(repo), ExecutionContext.global))
     .build()
@@ -39,7 +39,7 @@ object ProductServer2 extends App{
   val config = DatabaseConfig.forConfig[H2Profile]("db")
   val repo = new ProductRepository(config)
 
-  val result = repo.create("coca", "fria")
+  val result = repo.create("coca", "fria", "Bebida")
   val server: Server = ServerBuilder.forPort(50002)
     .addService(ProductServiceGrpc.bindService(new ProductService(repo), ExecutionContext.global))
     .build()
@@ -59,7 +59,7 @@ object ClientDemo extends App {
 
   val stub = ProductServiceGrpc.stub(channel)
 
-  val result = stub.newProduct(NewProductRequest("alfajor", "triple"))
+  val result = stub.newProduct(NewProductRequest("alfajor", "triple", "Comestibles"))
 
   result.onComplete { r =>
     stub.getProduct(ProductRequest(r.get.id)).onComplete(r2 => {

@@ -26,16 +26,16 @@ extends Db with ProductTable {
     * This is an asynchronous operation, it will return a future of the created product, which can be used to obtain the
     * id for that product.
     */
-  def create(name: String, description: String): Future[Product] = db.run(
+  def create(name: String, description: String, category: String): Future[Product] = db.run(
     // We create a projection of just the name and description columns, since we're not inserting a value for the id column
-    (product.map(p => (p.name, p.description))
+    (product.map(p => (p.name, p.description, p.category))
       // Now define it to return the id, because we want to know what id was generated for the product
       returning product.map(_.id)
       // And we define a transformation for the returned value, which combines our original parameters with the
       // returned id
-      into ((nameDesc, id) => Product(id, nameDesc._1, nameDesc._2))
+      into ((data, id) => Product(id, data._1, data._2, data._3))
       // And finally, insert the product into the database
-      ) += (name, description))
+      ) += (name, description, category))
 
   /**
     * List all the products in the database.
@@ -46,6 +46,11 @@ extends Db with ProductTable {
 
   def getById(id: Long): Future[Option[Product]] = db.run (
     product.filter{_.id === id}.result.headOption
+  )
+
+  //TODO test option
+  def getByCategory(category: String): Future[Seq[Product]] = db.run (
+    product.filter{_.category === category}.result
   )
 
 }
