@@ -1,5 +1,8 @@
 package server
 
+import java.net.URI
+
+import com.typesafe.config.{Config, ConfigFactory, ConfigValueFactory}
 import io.grpc.{ManagedChannel, ManagedChannelBuilder, Server, ServerBuilder}
 import product.product.{NewProductRequest, ProductRequest, ProductServiceGrpc}
 import repositories.ProductRepository
@@ -9,15 +12,24 @@ import slick.jdbc.MySQLProfile
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 
-object ProductServer extends App{
+object ProductServer extends App {
+
+  // root is the default value for user and password
+  val user: String = args.lift(0).getOrElse("root")
+  val password: String = args.lift(1).getOrElse("root")
 
   implicit val ec = ExecutionContext.global
 
   /*val serviceManager = new ServiceManager
   serviceManager.startConnection("0.0.0.0", 50000, "product")*/
 
-  val config = DatabaseConfig.forConfig[MySQLProfile]("db")
-  val repo = new ProductRepository(config)
+  val config: Config = ConfigFactory.load("db")
+  val url: String = s"jdbc:mysql://localhost:3306/test?user=$user&password=$password"
+  val newConfig = config.withValue("db.db.url", ConfigValueFactory.fromAnyRef(url))
+
+  val databaseConfig = DatabaseConfig.forConfig[MySQLProfile]("db", newConfig)
+
+  val repo = new ProductRepository(databaseConfig)
 
   val server: Server = ServerBuilder.forPort(50001)
     .addService(ProductServiceGrpc.bindService(new ProductService(repo), ExecutionContext.global))
