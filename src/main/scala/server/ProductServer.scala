@@ -1,6 +1,6 @@
 package server
 
-import io.grpc.{ManagedChannelBuilder, Server, ServerBuilder}
+import io.grpc.{ManagedChannel, ManagedChannelBuilder, Server, ServerBuilder}
 import product.product.{NewProductRequest, ProductRequest, ProductServiceGrpc}
 import repositories.ProductRepository
 import service.ProductService
@@ -13,13 +13,12 @@ object ProductServer extends App{
 
   implicit val ec = ExecutionContext.global
 
-  val serviceManager = new ServiceManager
-  serviceManager.startConnection("0.0.0.0", 50000, "product")
+  /*val serviceManager = new ServiceManager
+  serviceManager.startConnection("0.0.0.0", 50000, "product")*/
 
   val config = DatabaseConfig.forConfig[MySQLProfile]("db")
   val repo = new ProductRepository(config)
 
-  val result = repo.create("coca", "fria", "Bebida")
   val server: Server = ServerBuilder.forPort(50000)
     .addService(ProductServiceGrpc.bindService(new ProductService(repo), ExecutionContext.global))
     .build()
@@ -29,7 +28,7 @@ object ProductServer extends App{
   server.awaitTermination()
 }
 
-object ProductServer2 extends App{
+/*object ProductServer2 extends App{
 
   implicit val ec = ExecutionContext.global
 
@@ -47,9 +46,9 @@ object ProductServer2 extends App{
   server.start()
   println("Running...")
   server.awaitTermination()
-}
+}*/
 
-object ClientDemo extends App {
+/*object ClientDemo extends App {
 
   implicit val ec: ExecutionContextExecutor = ExecutionContext.global
 
@@ -69,4 +68,4 @@ object ClientDemo extends App {
   }
 
   System.in.read()
-}
+}*/
