@@ -19,7 +19,7 @@ object ProductServer extends App{
   val config = DatabaseConfig.forConfig[MySQLProfile]("db")
   val repo = new ProductRepository(config)
 
-  val server: Server = ServerBuilder.forPort(50000)
+  val server: Server = ServerBuilder.forPort(50001)
     .addService(ProductServiceGrpc.bindService(new ProductService(repo), ExecutionContext.global))
     .build()
 
