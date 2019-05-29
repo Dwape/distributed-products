@@ -3,13 +3,12 @@ package repositories
 import database.{Db, ProductTable}
 import models.Product
 import slick.basic.DatabaseConfig
-
-import slick.jdbc.H2Profile
+import slick.jdbc.MySQLProfile
 
 import scala.concurrent.Future
 
 
-class ProductRepository(val config: DatabaseConfig[H2Profile])
+class ProductRepository(val config: DatabaseConfig[MySQLProfile])
 extends Db with ProductTable {
 
   import config.profile.api._

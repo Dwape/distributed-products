@@ -5,7 +5,7 @@ import product.product.{NewProductRequest, ProductRequest, ProductServiceGrpc}
 import repositories.ProductRepository
 import service.ProductService
 import slick.basic.DatabaseConfig
-import slick.jdbc.H2Profile
+import slick.jdbc.MySQLProfile
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 
@@ -16,7 +16,7 @@ object ProductServer extends App{
   val serviceManager = new ServiceManager
   serviceManager.startConnection("0.0.0.0", 50000, "product")
 
-  val config = DatabaseConfig.forConfig[H2Profile]("db")
+  val config = DatabaseConfig.forConfig[MySQLProfile]("db")
   val repo = new ProductRepository(config)
 
   val result = repo.create("coca", "fria", "Bebida")
@@ -36,7 +36,7 @@ object ProductServer2 extends App{
   val stubManager = new ServiceManager
   stubManager.startConnection("0.0.0.0", 50002, "product")
 
-  val config = DatabaseConfig.forConfig[H2Profile]("db")
+  val config = DatabaseConfig.forConfig[MySQLProfile]("db")
   val repo = new ProductRepository(config)
 
   val result = repo.create("coca", "fria", "Bebida")
